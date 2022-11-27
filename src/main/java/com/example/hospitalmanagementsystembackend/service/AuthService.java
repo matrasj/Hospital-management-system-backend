@@ -4,14 +4,22 @@ import com.example.hospitalmanagementsystembackend.exception.auth.ConfirmationTo
 import com.example.hospitalmanagementsystembackend.exception.auth.ConfirmationTokenAlreadyExpiredException;
 import com.example.hospitalmanagementsystembackend.exception.auth.ConfirmationTokenNotExistsException;
 import com.example.hospitalmanagementsystembackend.factories.ConfirmationTokenFactory;
+import com.example.hospitalmanagementsystembackend.jwt.JwtTokenProvider;
 import com.example.hospitalmanagementsystembackend.mapper.ConfirmationTokenPayloadResponseMapper;
+import com.example.hospitalmanagementsystembackend.mapper.UserAuthenticationPayloadResponseMapper;
 import com.example.hospitalmanagementsystembackend.model.entity.ConfirmationToken;
 import com.example.hospitalmanagementsystembackend.model.entity.User;
+import com.example.hospitalmanagementsystembackend.model.payload.auth.login.LoginPayloadRequest;
+import com.example.hospitalmanagementsystembackend.model.payload.auth.login.LoginPayloadResponse;
 import com.example.hospitalmanagementsystembackend.model.payload.auth.registration.RegistrationPayloadRequest;
 import com.example.hospitalmanagementsystembackend.model.payload.auth.registration.RegistrationPayloadResponse;
 import com.example.hospitalmanagementsystembackend.repository.ConfirmationTokenRepository;
 import com.example.hospitalmanagementsystembackend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,9 +36,12 @@ public class AuthService {
     private static final String CONFIRMATION_TOKEN_ALREADY_EXPIRED_MESSAGE = "Token %s already expired";
     private static final boolean ENABLED_ACCOUNT = true;
     private static final String SUCCESSFULLY_CONFIRMED_ACCOUNT_MESSAGE = "Successfully confirmed account";
+    private static final String USERNAME_NOT_FOUND_MESSAGE = "Not found user with username: %s";
     private final UserRepository userRepository;
     private final ConfirmationTokenRepository confirmationTokenRepository;
     private final RegisterValidationService registerValidationService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
     public RegistrationPayloadResponse registerUser(RegistrationPayloadRequest request) {
         registerValidationService.validateRegistrationRequest(request);
@@ -83,5 +94,23 @@ public class AuthService {
         confirmationToken.setConfirmedAt(LocalDateTime.now());
 
         return SUCCESSFULLY_CONFIRMED_ACCOUNT_MESSAGE;
+    }
+
+    public LoginPayloadResponse login(LoginPayloadRequest request) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getUsername(),
+                        request.getPassword()
+                )
+        );
+
+        User user = userRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException(String.format(USERNAME_NOT_FOUND_MESSAGE, request.getUsername())));
+
+        String generatedJwtToken = jwtTokenProvider.generateJwtToken(authentication);
+        return LoginPayloadResponse.builder()
+                .jwtToken(generatedJwtToken)
+                .user(UserAuthenticationPayloadResponseMapper.mapToUserAuthenticationPayloadResponse(user))
+                .build();
     }
 }

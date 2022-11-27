@@ -8,7 +8,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static javax.persistence.CascadeType.*;
-import static javax.persistence.FetchType.LAZY;
+import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
@@ -44,7 +44,7 @@ public class User {
 
     @ManyToMany(cascade = {
             DETACH, MERGE
-    }, fetch = LAZY)
+    }, fetch = EAGER)
     @JoinTable(name = "user_role",
     joinColumns = {
             @JoinColumn(name = "user_id", referencedColumnName = "id")

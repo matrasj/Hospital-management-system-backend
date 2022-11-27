@@ -1,5 +1,7 @@
 package com.example.hospitalmanagementsystembackend.controller;
 
+import com.example.hospitalmanagementsystembackend.model.payload.auth.login.LoginPayloadRequest;
+import com.example.hospitalmanagementsystembackend.model.payload.auth.login.LoginPayloadResponse;
 import com.example.hospitalmanagementsystembackend.model.payload.auth.registration.RegistrationPayloadRequest;
 import com.example.hospitalmanagementsystembackend.model.payload.auth.registration.RegistrationPayloadResponse;
 import com.example.hospitalmanagementsystembackend.service.AuthService;
@@ -29,6 +31,12 @@ public class AuthController {
     public ResponseEntity<String> confirmToken(@RequestParam String token) {
         return ResponseEntity.status(OK)
                 .body(authService.confirmAccount(token));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginPayloadResponse> login(@RequestBody @Valid LoginPayloadRequest request) {
+        return ResponseEntity.status(OK)
+                .body(authService.login(request));
     }
 
 }
