@@ -1,17 +1,15 @@
 package com.example.hospitalmanagementsystembackend.model.entity;
 
-import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Collection;
+import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static jakarta.persistence.CascadeType.DETACH;
-import static jakarta.persistence.CascadeType.MERGE;
-import static jakarta.persistence.FetchType.LAZY;
-import static jakarta.persistence.GenerationType.IDENTITY;
+import static javax.persistence.CascadeType.*;
+import static javax.persistence.FetchType.LAZY;
+import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Getter
@@ -55,6 +53,9 @@ public class User {
             @JoinColumn(name = "role_id", referencedColumnName = "id")
     })
     private Set<Role> roles = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", cascade = ALL)
+    private Set<ConfirmationToken> tokens = new HashSet<>();
 
     public Set<Authority> getAuthorities() {
         return roles.stream()

@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableAspectJAutoProxy
 @EnableTransactionManagement
 @EnableAsync
-public class HospitalManagementSystemBackendApplication {
+public class HospitalManagementSystemBackendApplication  {
     public static void main(String[] args) {
         SpringApplication.run(HospitalManagementSystemBackendApplication.class, args);
     }

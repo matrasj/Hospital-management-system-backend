@@ -1,21 +1,19 @@
 package com.example.hospitalmanagementsystembackend.jwt;
 
 import com.example.hospitalmanagementsystembackend.exception.JwtTokenException;
+import com.example.hospitalmanagementsystembackend.service.UserDetailsServiceImpl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.stream.Collectors;
 
@@ -30,7 +28,7 @@ public class JwtTokenProvider {
     @Value("${auth.jwt.secret-key}")
     private String secretKey;
 
-    private final UserDetailsService userDetailsService;
+    private final UserDetailsServiceImpl userDetailsService;
     public String resolveToken(HttpServletRequest request) {
         String authorizationBearerToken = request.getHeader("Authorization");
 
