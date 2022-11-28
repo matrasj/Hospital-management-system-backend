@@ -4,7 +4,7 @@ import com.example.hospitalmanagementsystembackend.factories.ConfirmationTokenFa
 import com.example.hospitalmanagementsystembackend.jwt.JwtTokenProvider;
 import com.example.hospitalmanagementsystembackend.model.entity.ConfirmationToken;
 import com.example.hospitalmanagementsystembackend.model.entity.User;
-import com.example.hospitalmanagementsystembackend.model.payload.UserPrincipal;
+import com.example.hospitalmanagementsystembackend.model.payload.auth.UserPrincipal;
 import com.example.hospitalmanagementsystembackend.model.payload.auth.login.LoginPayloadRequest;
 import com.example.hospitalmanagementsystembackend.model.payload.auth.registration.RegistrationPayloadRequest;
 import com.example.hospitalmanagementsystembackend.repository.ConfirmationTokenRepository;

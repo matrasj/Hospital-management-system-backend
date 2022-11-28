@@ -1,4 +1,4 @@
-package com.example.hospitalmanagementsystembackend.model.payload;
+package com.example.hospitalmanagementsystembackend.model.payload.auth;
 
 import com.example.hospitalmanagementsystembackend.model.entity.Authority;
 import com.example.hospitalmanagementsystembackend.model.entity.User;

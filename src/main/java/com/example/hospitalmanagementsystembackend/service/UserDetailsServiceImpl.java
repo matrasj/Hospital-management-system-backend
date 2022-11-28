@@ -1,6 +1,6 @@
 package com.example.hospitalmanagementsystembackend.service;
 
-import com.example.hospitalmanagementsystembackend.model.payload.UserPrincipal;
+import com.example.hospitalmanagementsystembackend.model.payload.auth.UserPrincipal;
 import com.example.hospitalmanagementsystembackend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
