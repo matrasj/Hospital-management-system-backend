@@ -1,9 +1,14 @@
 package com.example.hospitalmanagementsystembackend.controller;
 
+import com.example.hospitalmanagementsystembackend.factories.ConfirmationTokenFactory;
 import com.example.hospitalmanagementsystembackend.jwt.JwtTokenProvider;
+import com.example.hospitalmanagementsystembackend.model.entity.ConfirmationToken;
 import com.example.hospitalmanagementsystembackend.model.entity.User;
 import com.example.hospitalmanagementsystembackend.model.payload.UserPrincipal;
 import com.example.hospitalmanagementsystembackend.model.payload.auth.login.LoginPayloadRequest;
+import com.example.hospitalmanagementsystembackend.model.payload.auth.registration.RegistrationPayloadRequest;
+import com.example.hospitalmanagementsystembackend.repository.ConfirmationTokenRepository;
+import com.example.hospitalmanagementsystembackend.repository.UserRepository;
 import com.example.hospitalmanagementsystembackend.service.AuthService;
 import com.example.hospitalmanagementsystembackend.service.UserDetailsServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,15 +22,18 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.reset;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.junit.jupiter.api.Assertions.*;
 
 @AutoConfigureTestDatabase
 @WebMvcTest(AuthController.class)
@@ -33,6 +41,12 @@ class AuthControllerTest {
 
     @MockBean
     AuthService authService;
+
+    @MockBean
+    UserRepository userRepository;
+
+    @MockBean
+    ConfirmationTokenRepository confirmationTokenRepository;
 
     @MockBean
     UserDetailsServiceImpl userService;
@@ -55,11 +69,45 @@ class AuthControllerTest {
     }
 
     @Test
-    void registerUser() {
+    void registerUser() throws Exception {
+        RegistrationPayloadRequest registrationPayloadRequest = buildRegistrationRequest();
+        assertAll("Registration payloaf request failed",
+            () -> assertEquals("username", registrationPayloadRequest.getUsername(), "Username failed"),
+            () -> assertEquals("password", registrationPayloadRequest.getPassword(), "Password failed")
+        );
+
+        given(userRepository.save(any())).willReturn(any());
+        String registerRequestAsString = objectMapper.writeValueAsString(registrationPayloadRequest);
+
+        mockMvc.perform(
+                post("/api/v1/auth/registration")
+                        .contentType(APPLICATION_JSON)
+                        .content(registerRequestAsString)
+                        .with(csrf())
+        ).andExpect(status().isCreated());
+    }
+
+    private RegistrationPayloadRequest buildRegistrationRequest() {
+        return RegistrationPayloadRequest.builder()
+                .username("username")
+                .password("password")
+                .build();
     }
 
     @Test
-    void confirmToken() {
+    void confirmToken() throws Exception {
+        ConfirmationToken confirmationToken = ConfirmationTokenFactory.generateConfirmationToken();
+        given(confirmationTokenRepository.findByToken(confirmationToken.getToken()))
+                .willReturn(Optional.of(confirmationToken));
+
+        mockMvc.perform(
+                get("/api/v1/auth/confirmation")
+                        .contentType(APPLICATION_JSON)
+                        .param("token", confirmationToken.getToken())
+                        .with(csrf())
+
+        ).andExpect(status().isOk());
+
     }
 
     @Test
