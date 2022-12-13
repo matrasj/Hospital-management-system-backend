@@ -20,4 +20,8 @@ public class PatientService {
     public Page<Patient> findPatientsPage(int pageNumber, int pageSize) {
         return patientRepository.findAll(PageRequest.of(pageNumber, pageSize));
     }
+
+    public Page<Patient> findPatientsPageFilteredByLastNameKeyword(int pageNumber, int pageSize, String lastNameKeyword) {
+        return patientRepository.findByLastNameContaining(lastNameKeyword, PageRequest.of(pageNumber, pageSize));
+    }
 }

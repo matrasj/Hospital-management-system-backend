@@ -29,4 +29,12 @@ public class PatientController {
         return ResponseEntity.status(OK)
                 .body(patientService.findPatientsPage(pageNumber, pageSize));
     }
+
+    @GetMapping("/pagination/findByLastNameKeywordContaining")
+    public ResponseEntity<Page<Patient>> getPatientsPageFilteredByLastNameKeywordContaining(@RequestParam int pageSize,
+                                                                                            @RequestParam int pageNumber,
+                                                                                            @RequestParam String lastNameKeyword) {
+        return ResponseEntity.status(OK)
+                .body(patientService.findPatientsPageFilteredByLastNameKeyword(pageNumber, pageSize, lastNameKeyword));
+    }
 }
