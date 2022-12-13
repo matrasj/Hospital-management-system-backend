@@ -43,6 +43,7 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
+    private final EmailSenderService emailSenderService;
     public RegistrationPayloadResponse registerUser(RegistrationPayloadRequest request) {
         registerValidationService.validateRegistrationRequest(request);
 
@@ -53,6 +54,8 @@ public class AuthService {
         confirmationToken.setUser(user);
 
         userRepository.save(user);
+
+        emailSenderService.sendConfirmationAccountEmail(confirmationToken);
 
         return buildRegistrationResponse(user, confirmationToken);
 
