@@ -15,8 +15,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import static org.springframework.http.HttpMethod.GET;
-
 
 @Configuration
 @RequiredArgsConstructor
@@ -33,8 +31,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers("/api/v1/auth/**")
-                .permitAll()
-                .antMatchers(GET, "/api/v1/**")
                 .permitAll()
                 .anyRequest()
                 .authenticated();
