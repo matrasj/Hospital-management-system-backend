@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.springframework.http.HttpStatus.OK;
 
@@ -36,5 +37,12 @@ public class PatientController {
                                                                                             @RequestParam String lastNameKeyword) {
         return ResponseEntity.status(OK)
                 .body(patientService.findPatientsPageFilteredByLastNameKeyword(pageNumber, pageSize, lastNameKeyword));
+    }
+
+    @PatchMapping("/{patientId}")
+    public ResponseEntity<Patient> changePatientField(@PathVariable Long patientId,
+                                                      @RequestBody Map<String, Object> fieldsMap) {
+        return ResponseEntity.status(OK)
+                .body(patientService.updatePatientField(patientId, fieldsMap));
     }
 }
