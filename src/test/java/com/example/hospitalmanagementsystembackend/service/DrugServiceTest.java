@@ -1,5 +1,6 @@
 package com.example.hospitalmanagementsystembackend.service;
 
+
 import com.example.hospitalmanagementsystembackend.model.payload.drug.CompanyWithDrugsQuantityPayload;
 import com.example.hospitalmanagementsystembackend.repository.DrugRepository;
 import org.junit.jupiter.api.Test;
@@ -47,13 +48,3 @@ class DrugServiceTest {
             () -> assertEquals(brandWithBiggestAmountOfDrugs.get(4)[1], mostPopularBrandsWithDrugsQuantity.get(4).getDrugsQuantity())
 
         );
-    }
-
-    @Test
-    void findDrugsPage() {
-    }
-
-    @Test
-    void findDrugsPageByKeywordContaining() {
-    }
-}
